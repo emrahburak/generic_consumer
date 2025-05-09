@@ -453,6 +453,34 @@ class RabbitMQBroker:
 
 
 def get_message_broker(broker_type: str, **kwargs) -> MessageBroker:
+    """
+    TR:
+    Belirtilen türde bir mesaj aracısı (message broker) nesnesi döndürür.
+    
+    Parametreler:
+        broker_type (str): 'redis' veya 'rabbitmq' gibi broker türü.
+        **kwargs: Broker yapılandırması için gerekli anahtar kelime argümanları.
+
+    Dönüş:
+        MessageBroker: Uygun alt sınıftan bir mesaj aracısı nesnesi.
+
+    Hata:
+        ValueError: Geçersiz bir broker türü verildiğinde fırlatılır.
+
+    EN:
+    Returns a message broker instance based on the given type.
+
+    Args:
+        broker_type (str): The type of broker, e.g., 'redis' or 'rabbitmq'.
+        **kwargs: Keyword arguments required for broker configuration.
+
+    Returns:
+        MessageBroker: An instance of the corresponding broker subclass.
+
+    Raises:
+        ValueError: If an unsupported broker type is provided.
+    """
+
     if broker_type == "redis":
         return RedisBroker(**kwargs)
     elif broker_type == "rabbitmq":
@@ -466,6 +494,42 @@ def build_message_broker(broker_type: str,
                          port: int,
                          user: str = None,
                          password: str = None) -> MessageBroker:
+    """
+    TR:
+    Belirtilen konfigürasyon bilgilerine göre yapılandırılmış bir mesaj aracısı (message broker) oluşturur.
+    RabbitMQ için uygun ack (onay) stratejisini de ortama göre belirleyip uygular.
+
+    Parametreler:
+        broker_type (str): Broker türü ('rabbitmq' veya 'redis').
+        host (str): Broker sunucu adresi.
+        port (int): Broker portu.
+        user (str, optional): Kullanıcı adı (RabbitMQ için gerekli olabilir).
+        password (str, optional): Parola (RabbitMQ için gerekli olabilir).
+
+    Dönüş:
+        MessageBroker: Yapılandırılmış mesaj aracısı nesnesi.
+
+    Hatalar:
+        ValueError: Desteklenmeyen bir broker türü veya geçersiz bir ack stratejisi verildiğinde fırlatılır.
+
+    EN:
+    Builds and returns a configured message broker instance based on the given parameters.
+    For RabbitMQ, it determines and applies the appropriate acknowledgment strategy from the environment.
+
+    Args:
+        broker_type (str): The broker type ('rabbitmq' or 'redis').
+        host (str): Host address of the broker.
+        port (int): Port number of the broker.
+        user (str, optional): Username (may be required for RabbitMQ).
+        password (str, optional): Password (may be required for RabbitMQ).
+
+    Returns:
+        MessageBroker: A properly configured broker instance.
+
+    Raises:
+        ValueError: If the broker type or the ACK strategy is unsupported.
+    """
+
     if broker_type == "rabbitmq":
         ack_strategy_name = os.getenv("ACK_STRATEGY", "auto_ack").lower()
         strategy_map = {

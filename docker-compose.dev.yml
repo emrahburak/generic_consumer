@@ -1,0 +1,17 @@
+networks:
+  aprilrain_queue_network:
+    driver: bridge
+  
+services:
+  # ============================
+  #  Consumer & Publisher (redis/rabbitmq/Restful)
+  # ==========================
+  generic_consumer:
+    build: .
+    container_name: generic_consumer
+    restart: always
+    env_file:
+      - ~/Belgeler/app_environment/aprilrain.env
+    networks:
+      - aprilrain_queue_network
+
