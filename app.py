@@ -18,7 +18,7 @@ exchange_name = os.getenv("EXCHANGE_NAME", "audio_transcription_exchange")
 sender_type = os.getenv("SENDER_TYPE", "api")
 sender_host = os.getenv("SENDER_HOST", "rabbitmq")
 sender_port = int(os.getenv("SENDER_PORT", 5672))
-sender_url = os.getenv("SENDER_URL", "http://api-gateway/transcriptions")
+sender_url = os.getenv("SENDER_URL", "url")
 sender_user = os.getenv("SENDER_USER", "guest")
 sender_password = os.getenv("SENDER_PASSWORD", "guest")
 sender_header = os.getenv("SENDER_HEADER", "{}")
@@ -34,16 +34,10 @@ queue_items = [
     if re.match(r'^QUEUE_ITEM_\d+$', key)
 ]
 
-# send_queue_items = [
-#     value for key, value in os.environ.items()
-#     if re.match(r'^SEND_QUEUE_ITEM_\d+$', key)
-# ]
 
 if not queue_items:
     raise ValueError("No queue items found in environment variables.")
 
-ack_strategy = None  #glabal
-sender = None
 
 consumer_builder = SenderBuilder()
 sender_builder = SenderBuilder()
@@ -55,7 +49,6 @@ broker = (
         rabbitmq_password).with_target_queue_list(
             queue_items).with_exchange_name(exchange_name).build())
 
-sender = None
 
 if sender_type == "api":
     sender = (sender_builder.with_sender_type(sender_type).with_url(
