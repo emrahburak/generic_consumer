@@ -42,9 +42,8 @@ COPY --from=builder /install /usr/local
 COPY app.py .
 COPY log_setup.py .
 COPY message_broker.py .
-COPY message_dispacther.py .
+COPY message_dispatcher.py .
 COPY circuit_breaker.py .
-COPY utils.py .
 
 # Consumer script'ini çalıştır
 CMD ["python", "app.py"]
