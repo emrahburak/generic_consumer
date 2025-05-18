@@ -1,6 +1,11 @@
 networks:
   aprilrain_queue_network:
-    driver: bridge
+    external: true
+  aprilrain_db_network:
+    external: true
+  api-omnistart-network:
+    external: true
+ 
   
 services:
   # ============================
@@ -9,9 +14,11 @@ services:
   generic_consumer:
     build: .
     container_name: generic_consumer
-    restart: always
+    restart: unless-stopped
     env_file:
-      - ~/Belgeler/app_environment/aprilrain.env
+      - /home/boncuk/Belgeler/app_environment/aprilrain.env
     networks:
       - aprilrain_queue_network
+      - aprilrain_db_network
+      - api-omnistart-network
 

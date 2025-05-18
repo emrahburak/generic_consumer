@@ -1,13 +1,14 @@
 # ==================== Build Aşaması ====================
 FROM python:3.10-slim AS builder
 
-# Çalışma dizinini ayarla
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# Gerekli bağımlılıkları yükle
 COPY requirements.txt .
 
-# pip'i güncelle ve paketleri kur
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir --prefix=/install -r requirements.txt 
 
@@ -29,8 +30,7 @@ ENV SENDER_PORT=5672
 ENV SENDER_URL="guest"
 ENV SENDER_PASSWORD="guest"
 ENV SENDER_HEADER=""
-ENV PYTHONPATH=/usr/local/lib/python3.9/site-packages
-
+ENV PYTHONPATH=/install/lib/python3.10/site-packages:/usr/local/lib/python3.10/site-packages:/app
 
 # Çalışma dizinini ayarla
 WORKDIR /app
@@ -40,10 +40,6 @@ COPY --from=builder /install /usr/local
 
 # Consumer script'ini kopyala
 COPY app.py .
-COPY log_setup.py .
-COPY message_broker.py .
-COPY message_dispatcher.py .
-COPY circuit_breaker.py .
 
 # Consumer script'ini çalıştır
 CMD ["python", "app.py"]
